@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box glass-panel" style="max-width: 500px;">
+        <h2 style="color: #2979FF;">Configurações do Perfil</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Atualize suas informações
+            pessoais e categorias de gastos.</p>
+
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="name">Nome de Usuário</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ current_user.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Sua Idade</label>
+                <input type="number" id="age" name="age" class="form-control" value="{{ current_user.age }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="average_salary">Média Salarial Mensal (R$)</label>
+                <input type="number" step="0.01" id="average_salary" name="average_salary" class="form-control"
+                    value="{{ current_user.average_salary }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="categories">Suas Categorias (separadas por vírgula)</label>
+                <input type="text" id="categories" name="categories" class="form-control"
+                    value="{{ current_user.categories }}" placeholder="Ex: Moradia, Alimentação, Lazer">
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                style="background: linear-gradient(135deg, #2979FF 0%, #1565C0 100%);">Salvar Alterações</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header" style="margin-bottom: 2rem;">
+        <h1>Histórico de Transações</h1>
+        <p style="color: var(--text-muted)">Edite ou remova lançamentos inseridos incorretamente.</p>
+    </div>
+
+    <div class="glass-panel" style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--panel-border);">
+                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Data</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Tipo</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Descrição</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Valor</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Categoria</th>
+                    <th style="padding: 1rem; text-align: right; color: var(--text-muted); font-weight: 500;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 1rem;">{{ t.date.strftime('%d/%m/%Y') }}</td>
+                    <td style="padding: 1rem;">
+                        {% if t.type == 'income' %}
+                        <span style="color: #00E676; font-weight: 600;">Receita</span>
+                        {% else %}
+                        <span style="color: #FF1744; font-weight: 600;">Despesa</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem;">{{ t.title }}</td>
+                    <td style="padding: 1rem;">R$ {{ "%.2f"|format(t.amount) }}</td>
+                    <td style="padding: 1rem;">{{ t.category }}</td>
+                    <td style="padding: 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <a href="{{ url_for('main.edit_transaction', transaction_id=t.id) }}" class="btn"
+                                style="padding: 0.3rem 0.8rem; font-size: 0.8rem; background: rgba(41, 121, 255, 0.2); border: 1px solid #2979FF; color: #82b1ff;">✏️
+                                Editar</a>
+
+                            <form action="{{ url_for('main.delete_transaction', transaction_id=t.id) }}" method="POST"
+                                style="display: inline;"
+                                onsubmit="return confirm('Tem certeza que deseja excluir esta transação?');">
+                                <button type="submit" class="btn"
+                                    style="padding: 0.3rem 0.8rem; font-size: 0.8rem; background: rgba(255, 23, 68, 0.2); border: 1px solid #FF1744; color: #ff8a80;">🗑️
+                                    Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-muted);">Nenhuma
+                        transação encontrada.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

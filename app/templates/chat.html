@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header" style="margin-bottom: 2rem;">
+        <h1>Chat com IA (Milu)</h1>
+        <p style="color: var(--text-muted)">Pergunte sobre seus gastos, saldo e dicas financeiras.</p>
+    </div>
+
+    <div class="glass-panel" style="max-width: 800px; margin: 0 auto;">
+
+        <div class="chat-history"
+            style="min-height: 200px; max-height: 400px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 10px;">
+            {% if response %}
+            <div class="chat-message bot-message"
+                style="background: rgba(69, 243, 255, 0.1); border-left: 4px solid var(--primary-color); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="font-weight: bold; margin-bottom: 0.5rem; color: var(--primary-color);">Milu Assistente
+                </div>
+                <div style="line-height: 1.5; white-space: pre-wrap;">{{ response }}</div>
+            </div>
+            {% else %}
+            <div style="text-align: center; color: var(--text-muted); padding: 2rem 0;">
+                Envie uma mensagem para começar a conversar com a Milu!
+                <br><br>
+                <i>Ex: "Quanto gastei com Alimentação este mês?" ou "Como posso economizar?"</i>
+            </div>
+            {% endif %}
+        </div>
+
+        <form method="POST" action="" style="display: flex; gap: 1rem;">
+            <input type="text" name="message" class="form-control" placeholder="Pergunte sobre suas finanças..."
+                required style="flex: 1;">
+            <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.8rem 1.5rem;">Enviar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

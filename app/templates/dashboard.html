@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header" style="margin-bottom: 2rem;">
+        <h1>Olá, {{ current_user.name.split()[0] }}!</h1>
+        <p style="color: var(--text-muted)">Aqui está o resumo das suas finanças.</p>
+    </div>
+
+    <div class="cards-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="glass-panel" style="padding: 1.5rem;">
+            <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Saldo Atual</h3>
+            <h2 style="font-size: 2rem; color: {% if balance >= 0 %}#00E676{% else %}#FF1744{% endif %};">
+                R$ {{ "%.2f"|format(balance) }}
+            </h2>
+        </div>
+        <div class="glass-panel" style="padding: 1.5rem;">
+            <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Receitas</h3>
+            <h2 style="font-size: 2rem; color: #00E676;">
+                + R$ {{ "%.2f"|format(total_income) }}
+            </h2>
+        </div>
+        <div class="glass-panel" style="padding: 1.5rem;">
+            <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Gastos</h3>
+            <h2 style="font-size: 2rem; color: #FF1744;">
+                - R$ {{ "%.2f"|format(total_expense) }}
+            </h2>
+        </div>
+    </div>
+
+    <div class="dashboard-content" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Chart Section -->
+        <div class="glass-panel">
+            <h3 style="margin-bottom: 1.5rem;">Gastos por Categoria</h3>
+            <canvas id="expenseChart" height="150"></canvas>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="glass-panel">
+            <h3 style="margin-bottom: 1.5rem;">Últimas Movimentações</h3>
+            {% if transactions %}
+            <ul style="list-style: none; padding: 0;">
+                {% for t in transactions %}
+                <li
+                    style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(--panel-border);">
+                    <div>
+                        <strong>{{ t.title }}</strong>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">{{ t.category }} | {{
+                            t.date.strftime('%d/%m/%Y') }}</div>
+                    </div>
+                    <div
+                        style="font-weight: 600; color: {% if t.type == 'income' %}#00E676{% else %}#FF1744{% endif %};">
+                        {% if t.type == 'income' %}+{% else %}-{% endif %} R$ {{ "%.2f"|format(t.amount) }}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color: var(--text-muted);">Nenhuma movimentação registrada.</p>
+            {% endif %}
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <a href="{{ url_for('main.add_expense') }}" class="btn btn-primary"
+                    style="text-align: center; text-decoration: none; font-size: 0.9rem; background: #FF1744; box-shadow: 0 4px 15px rgba(255, 23, 68, 0.3);">+
+                    Gasto</a>
+                <a href="{{ url_for('main.add_income') }}" class="btn btn-primary"
+                    style="text-align: center; text-decoration: none; font-size: 0.9rem; background: #00E676; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);">+
+                    Receita</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+
+    // Gradient for chart
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(69, 243, 255, 0.8)');
+    gradient.addColorStop(1, 'rgba(255, 45, 117, 0.8)');
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ categories | tojson }},
+        datasets: [{
+            data: {{ category_amounts | tojson }},
+        backgroundColor: [
+            '#45f3ff', '#ff2d75', '#00E676', '#FF9100', '#D500F9', '#2979FF'
+        ],
+        borderWidth: 0,
+        hoverOffset: 10
+            }]
+        },
+        options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: '#fff' }
+            }
+        },
+        cutout: '70%'
+    }
+    });
+</script>
+{% endblock %}

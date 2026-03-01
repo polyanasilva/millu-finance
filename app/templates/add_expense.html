@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box glass-panel" style="max-width: 500px;">
+        <h2 style="color: #FF1744;">Cadastrar Gasto</h2>
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="title">Descrição do Gasto</label>
+                <input type="text" id="title" name="title" class="form-control" required
+                    placeholder="Ex: Supermercado Assaí">
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Valor (R$)</label>
+                <input type="number" step="0.01" id="amount" name="amount" class="form-control" required
+                    placeholder="150.00">
+            </div>
+
+            <div class="form-group">
+                <label for="category">Categoria</label>
+                <!-- Using select with existing user categories if applicable, or generic text -->
+                <input type="text" id="category" name="category" class="form-control" required
+                    placeholder="Ex: Alimentação" list="category-list">
+                <datalist id="category-list">
+                    {% if current_user.categories %}
+                    {% for cat in current_user.categories.split(',') %}
+                    <option value="{{ cat.strip() }}">
+                        {% endfor %}
+                        {% endif %}
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label for="payment_method">Método de Pagamento</label>
+                <select id="payment_method" name="payment_method" class="form-control" style="appearance: none;">
+                    <option value="credit">Cartão de Crédito</option>
+                    <option value="debit">Cartão de Débito</option>
+                    <option value="pix">PIX</option>
+                    <option value="cash">Dinheiro</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="installments" name="installments" style="width: 20px; height: 20px;">
+                <label for="installments" style="margin-bottom: 0;">Compra Parcelada?</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                style="background: linear-gradient(135deg, #FF1744 0%, #ff5252 100%); box-shadow: 0 4px 15px rgba(255, 23, 68, 0.3);">Adicionar
+                Gasto</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

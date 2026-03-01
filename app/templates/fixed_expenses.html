@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header"
+        style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Calendário de Contas: {{ month_name }} / {{ year }}</h1>
+            <p style="color: var(--text-muted)">Gerencie seus gastos e assinaturas recorrentes.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('main.add_fixed_expense') }}" class="btn btn-primary"
+                style="background: #2979FF; display: inline-block;">+ Conta Nova</a>
+        </div>
+    </div>
+
+    <!-- Month Navigation -->
+    <div class="calendar-navigation"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; background: var(--panel-bg); padding: 1rem; border-radius: 16px; border: 1px solid var(--panel-border);">
+        <a href="{{ url_for('main.fixed_expenses', month=prev_month, year=prev_year) }}"
+            style="color: var(--primary-color); text-decoration: none; font-weight: 600;">&larr; Anterior</a>
+        <h3 style="margin: 0; padding: 0;">{{ month }} / {{ year }}</h3>
+        <a href="{{ url_for('main.fixed_expenses', month=next_month, year=next_year) }}"
+            style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Próximo &rarr;</a>
+    </div>
+
+    <div class="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;">
+        <!-- Days of week header -->
+        {% for day_name in ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'] %}
+        <div style="text-align: center; font-weight: 600; color: var(--text-muted); padding-bottom: 0.5rem;">{{ day_name
+            }}</div>
+        {% endfor %}
+
+        <!-- Calendar Days -->
+        {% for week in calendar %}
+        {% for day in week %}
+        <div class="calendar-cell" style="
+                    min-height: 120px; 
+                    background: rgba(255, 255, 255, 0.03); 
+                    border: 1px solid {% if day == today.day and month == today.month and year == today.year %}var(--primary-color){% else %}var(--panel-border){% endif %};
+                    border-radius: 12px;
+                    padding: 8px;
+                    position: relative;
+                ">
+            {% if day != 0 %}
+            <div
+                style="font-weight: 700; color: {% if day == today.day and month == today.month and year == today.year %}var(--primary-color){% else %}var(--text-color){% endif %}; margin-bottom: 10px;">
+                {{ day }}</div>
+
+            <!-- Fixed Expenses for this day -->
+            {% if day in expenses_by_day %}
+            {% for ex in expenses_by_day[day] %}
+            {% if ex.is_paid %}
+            <div class="expense-tag paid"
+                style="background: rgba(0, 230, 118, 0.15); border: 1px solid #00E676; border-radius: 6px; padding: 5px; font-size: 0.8rem; margin-bottom: 5px; cursor: default;">
+                <div style="font-weight: 600; color: #00E676;">&#10003; {{ ex.obj.title }}</div>
+                <div style="color: #a0cda0;">R$ {{ "%.2f"|format(ex.paid_amount) }}</div>
+            </div>
+            {% else %}
+            <div class="expense-tag unpaid"
+                style="background: rgba(255, 23, 68, 0.15); border: 1px solid #FF1744; border-radius: 6px; padding: 5px; font-size: 0.8rem; margin-bottom: 5px; cursor: pointer;"
+                onclick="openPaymentModal({{ ex.obj.id }}, '{{ ex.obj.title }}', {{ ex.obj.default_amount }})">
+                <div style="font-weight: 600; color: #FF1744;">&#9888; {{ ex.obj.title }}</div>
+                <div style="color: #F8BBD0;">Pagamento pendente</div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="paymentModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+    <div class="glass-panel" style="width: 100%; max-width: 400px;">
+        <h3 id="modalTitle" style="margin-bottom: 1rem;">Confirmar Pagamento</h3>
+        <form id="paymentForm" method="POST" action="">
+            <input type="hidden" name="month" value="{{ month }}">
+            <input type="hidden" name="year" value="{{ year }}">
+            <div class="form-group">
+                <label for="amount">Valor exato pago este mês (R$)</label>
+                <input type="number" step="0.01" id="modalAmount" name="amount" class="form-control" required>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="background: #00E676;">Marcar como Pago</button>
+                <button type="button" class="btn"
+                    style="background: transparent; border: 1px solid var(--text-muted); color: var(--text-color);"
+                    onclick="closePaymentModal()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openPaymentModal(id, title, defaultAmount) {
+        document.getElementById('paymentModal').style.display = 'flex';
+        document.getElementById('modalTitle').innerText = 'Pagar: ' + title;
+        document.getElementById('modalAmount').value = defaultAmount;
+        document.getElementById('paymentForm').action = '/pay_fixed_expense/' + id;
+    }
+
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+    }
+</script>
+{% endblock %}
