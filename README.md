@@ -1,6 +1,6 @@
-# Milu Finance
+# Millu Finance
 
-Milu Finance is a comprehensive personal finance management web application designed to help users track their income, monitor expenses, manage recurring fixed bills, and receive intelligent financial insights. Built with Python and Flask, the application integrates with Google's Gemini AI to act as a virtual, context-aware financial assistant.
+Millu Finance is a comprehensive personal finance management web application designed to help users track their income, monitor expenses, manage recurring fixed bills, and receive intelligent financial insights. Built with Python and Flask, the application integrates with Google's Gemini AI to act as a virtual, context-aware financial assistant.
 
 ## Features
 
@@ -8,7 +8,7 @@ Milu Finance is a comprehensive personal finance management web application desi
 *   **Dashboard Overview:** A centralized view of the user's current financial status, including total income, total expenses, remaining balance, and a breakdown of expenses by category.
 *   **Transaction Management:** Easily log general expenses and income. Users can view, edit, and delete their transaction history.
 *   **Fixed Expenses Tracker:** Dedicated management for recurring monthly bills, allowing users to track due dates, base amounts, and log payments for specific months.
-*   **AI Financial Assistant (Milu):** An integrated chat interface utilizing the Gemini AI model. "Milu" is provided with the user's financial context (balance, recent transactions, pending fixed expenses) to offer personalized and relevant financial advice.
+*   **AI Financial Assistant (Millu):** An integrated chat interface utilizing the Gemini AI model. "Millu" is provided with the user's financial context (balance, recent transactions, pending fixed expenses) to offer personalized and relevant financial advice.
 
 ## Technology Stack
 
@@ -30,7 +30,7 @@ You will also need an API key from Google Generative AI to use the chatbot featu
 
 1.  **Clone the repository (or navigate to the project directory):**
     ```bash
-    cd "milu finance"
+    cd "millu finance"
     ```
 
 2.  **Create and activate a virtual environment:**
